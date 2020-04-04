@@ -1,7 +1,6 @@
 terraform {
   backend "s3" {
-    workspace_key_prefix = "github-actions-testing"
-    key                  = "tfstate"
+    key = "github-actions-tfstate"
   }
 }
 
