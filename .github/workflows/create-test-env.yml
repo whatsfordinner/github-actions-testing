@@ -36,6 +36,7 @@ jobs:
           args: -backend-config="bucket=${{ secrets.TERRAFORM_BACKEND_BUCKET }}"
         env:
           TF_WORKSPACE: ${{ github.ref }}
+          TF_LOG: TRACE
 
   deploy:
     name: Deploy new application code to test infrastructure
