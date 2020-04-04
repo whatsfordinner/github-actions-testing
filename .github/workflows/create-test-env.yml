@@ -1,0 +1,25 @@
+name: Create Test Environment
+on:
+  push:
+    branches-ignore:
+      - master
+
+jobs:
+  build:
+    name: Build application code into Lambda deployment package
+    steps:
+      - name: build test
+        run: echo this is the build step
+  terraform:
+    name: Deploy test AWS infrastructure
+    steps:
+      - name: terraform test
+        run: echo this is the terraform step
+  deploy:
+    name: Deploy new application code to test infrastructure
+    needs:
+      - build
+      - terraform
+    steps:
+      - name: deploy test
+        echo: this is the deploy step
