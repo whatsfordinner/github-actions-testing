@@ -42,7 +42,7 @@ jobs:
           tf_actions_working_dir: .github/terraform
           tf_actions_comment: false
         env:
-          TF_WORKSPACE: ${{ GITHUB_SHA::8 }}
+          TF_WORKSPACE: ${GITHUB_SHA::8}
 
   deploy:
     name: Deploy new application code to test infrastructure
