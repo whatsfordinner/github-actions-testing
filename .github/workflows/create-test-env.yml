@@ -35,7 +35,7 @@ jobs:
           tf_actions_comment: false
           args: -backend-config="bucket=${{ secrets.TERRAFORM_BACKEND_BUCKET }}" -input=false
         env:
-          TF_WORKSPACE: ${{ github.ref }}
+          TF_WORKSPACE: ${{ github.sha }}
           TF_LOG: TRACE
 
   deploy:
