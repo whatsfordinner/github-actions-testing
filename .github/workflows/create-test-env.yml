@@ -22,4 +22,4 @@ jobs:
       - terraform
     steps:
       - name: deploy test
-        echo: this is the deploy step
+        run: echo this is the deploy step
