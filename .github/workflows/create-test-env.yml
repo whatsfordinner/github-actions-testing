@@ -7,16 +7,46 @@ on:
 jobs:
   build:
     name: Build application code into Lambda deployment package
+    runs-on: ubuntu-latest
     steps:
       - name: build test
         run: echo this is the build step
+
   terraform:
     name: Deploy test AWS infrastructure
+    runs-on: ubuntu-latest
     steps:
-      - name: terraform test
-        run: echo this is the terraform step
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Assume Role
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-2
+          role-to-assume: ${{ secrets.TERRAFORM_BUILD_ROLE }}
+          role-duration-seconds: 3600
+      - name: Terraform Init
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.12.24
+          tf_actions_subcommand: init
+          tf_actions_working_dir: .github/terraform
+          tf_actions_comment: false
+          args: -backend-config="bucket=${{ secrets.TERRAFORM_BACKEND_BUCKET }}" -input=false
+      - name: Terraform Plan
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.12.24
+          tf_actions_subcommand: plan
+          tf_actions_working_dir: .github/terraform
+          tf_actions_comment: false
+        env:
+          TF_WORKSPACE: ${{ github.ref }}
+
   deploy:
     name: Deploy new application code to test infrastructure
+    runs-on: ubuntu-latest
     needs:
       - build
       - terraform
