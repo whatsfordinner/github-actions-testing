@@ -1,6 +1,6 @@
 resource "aws_api_gateway_rest_api" "gw" {
-  name        = "${terraform.workspace}-hello-api"
-  description = "Hello World API for ${terraform.workspace}"
+  name        = "${var.env_prefix}-hello-api"
+  description = "Hello World API for ${var.env_prefix}"
 
   endpoint_configuration {
     types = [
