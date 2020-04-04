@@ -33,7 +33,7 @@ jobs:
           tf_actions_subcommand: init
           tf_actions_working_dir: .github/terraform
           tf_actions_comment: false
-          args: -backend-config="bucket=${{ secrets.TERRAFORM_BACKEND_BUCKET }}"
+          args: -backend-config="bucket=${{ secrets.TERRAFORM_BACKEND_BUCKET }}" -input=false
         env:
           TF_WORKSPACE: ${{ github.ref }}
           TF_LOG: TRACE
