@@ -34,9 +34,6 @@ jobs:
           tf_actions_working_dir: .github/terraform
           tf_actions_comment: false
           args: -backend-config="bucket=${{ secrets.TERRAFORM_BACKEND_BUCKET }}" -input=false
-        env:
-          TF_WORKSPACE: ${{ github.sha }}
-          TF_LOG: TRACE
 
   deploy:
     name: Deploy new application code to test infrastructure
