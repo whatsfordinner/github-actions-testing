@@ -1,0 +1,14 @@
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./
+      Handler: hello.handler
+      Runtime: python3.7
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /hello
+            Method: GET
