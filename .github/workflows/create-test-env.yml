@@ -26,6 +26,8 @@ jobs:
           aws-region: ap-southeast-2
           role-to-assume: ${{ secrets.TERRAFORM_BUILD_ROLE }}
           role-duration-seconds: 3600
+      - name: Generate temporary worksapce ID
+        run: echo "::set-env name=ref_workspace::$(git name-rev HEAD --name-only | sha1sum | cut -d' ' -f1 | cut -c -10)"
       - name: Terraform Init
         uses: hashicorp/terraform-github-actions@master
         with:
@@ -42,7 +44,7 @@ jobs:
           tf_actions_working_dir: .github/terraform
           tf_actions_comment: false
         env:
-          TF_WORKSPACE: ${{ github.ref }}
+          TF_WORKSPACE: ${{ env.ref_workspace }}
       - name: Terraform Apply
         uses: hashicorp/terraform-github-actions@master
         with:
@@ -51,7 +53,7 @@ jobs:
           tf_actions_working_dir: .github/terraform
           tf_actions_comment: false
         env:
-          TF_WORKSPACE: ${{ github.ref }}
+          TF_WORKSPACE: ${{ env.ref_workspace }}
 
   deploy:
     name: Deploy new application code to test infrastructure
