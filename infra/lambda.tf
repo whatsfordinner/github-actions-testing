@@ -5,7 +5,7 @@ data "archive_file" "placeholder" {
 }
 
 resource "aws_iam_role" "r" {
-  name               = "${var.env_prefix}-f-exec-role"
+  name               = "${terraform.workspace}-f-exec-role"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -30,7 +30,7 @@ resource "aws_iam_role_policy_attachment" "a" {
 
 resource "aws_lambda_function" "f" {
   filename      = data.archive_file.placeholder.output_path
-  function_name = "${var.env_prefix}-hello-world"
+  function_name = "${terraform.workspace}-hello-world"
   role          = aws_iam_role.r.arn
   handler       = "placeholder.handler"
   runtime       = "python3.7"
