@@ -71,5 +71,17 @@ jobs:
     needs:
       - terraform
     steps:
-      - name: deploy test
-        run: echo this is the deploy step
+      - uses: actions/checkout@master
+      - name: Setup python
+        uses: actions/setup-python@v1
+        with:
+          python-version: "3.7"
+      - name: Installing dependencies
+        run: pip install -r requirements.txt --target ./packages
+        working-directory: app/hello
+      - name: Zipping up dependencies
+        run: zip -r9 ../function.zip .
+        working-directory: app/hello/packges
+      - name: Adding function code
+        run: zip -g function.zip hello.py
+        working-directory: app/hello
