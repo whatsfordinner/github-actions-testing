@@ -6,18 +6,28 @@ on:
 
 jobs:
   build:
-    name: Build application code into Lambda deployment package
+    name: Testing application code
     runs-on: ubuntu-latest
     steps:
-      - name: build test
-        run: echo this is the build step
+      - uses: actions/checkout@master
+      - name: Setup python
+        uses: actions/setup-python@v1
+        with:
+          python-version: "3.7"
+      - name: Installing dependencies
+        run: pip install -r requirements.txt --target ./packages
+        working-directory: app/hello
+      - name: Running unit tests
+        run: python3 hello_test.py
+        working-directory: app/hello
 
   terraform:
     name: Deploy test AWS infrastructure
     runs-on: ubuntu-latest
+    needs:
+      - build
     steps:
-      - name: Checkout
-        uses: actions/checkout@master
+      - uses: actions/checkout@master
       - name: Assume Role
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -59,7 +69,6 @@ jobs:
     name: Deploy new application code to test infrastructure
     runs-on: ubuntu-latest
     needs:
-      - build
       - terraform
     steps:
       - name: deploy test
