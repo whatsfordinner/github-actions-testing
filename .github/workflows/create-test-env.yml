@@ -1,8 +1,5 @@
 name: Create Test Environment
-on:
-  push:
-    branches-ignore:
-      - master
+on: pull_request
 
 jobs:
   build:
@@ -47,6 +44,7 @@ jobs:
           tf_actions_comment: false
           args: -backend-config="bucket=${{ secrets.TERRAFORM_BACKEND_BUCKET }}" -input=false
       - name: Terraform Plan
+        id: terraform_plan
         uses: hashicorp/terraform-github-actions@master
         with:
           tf_actions_version: 0.12.24
@@ -56,6 +54,7 @@ jobs:
         env:
           TF_WORKSPACE: ${{ env.ref_workspace }}
       - name: Terraform Apply
+        if: steps.terraform_plan.outputs.tf_actions_plan_has_changes == 'true'
         uses: hashicorp/terraform-github-actions@master
         with:
           tf_actions_version: 0.12.24
