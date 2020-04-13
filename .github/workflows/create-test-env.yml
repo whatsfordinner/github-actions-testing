@@ -65,4 +65,4 @@ jobs:
         env:
           TF_WORKSPACE: ${{ env.ref_workspace }}
       - name: Deploy application to test infra
-        run: .github/scripts/deploy_lambda.sh ${{ env.ref_workspace }}-hello-lambda app/hello
+        run: .github/scripts/deploy_lambda.sh ${{ env.ref_workspace }}-hello-world app/hello
