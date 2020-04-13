@@ -1,5 +1,9 @@
 name: Create Test Environment
-on: pull_request
+on: 
+  pull_request:
+    paths-ignore:
+      - README.md
+      - docs/**
 
 jobs:
   build:
