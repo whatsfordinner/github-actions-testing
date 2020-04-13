@@ -19,7 +19,7 @@ jobs:
           role-to-assume: ${{ secrets.TERRAFORM_BUILD_ROLE }}
           role-duration-seconds: 3600
       - name: Generate temporary worksapce ID
-        run: echo "::set-env name=ref_workspace::$(git name-rev HEAD --name-only | sha1sum | cut -d' ' -f1 | cut -c -10)"
+        run: echo "::set-env name=ref_workspace::$(echo ${{ github.ref }} | sha1sum | cut -d' ' -f1 | cut -c -10)"
       - name: Terraform Init
         uses: hashicorp/terraform-github-actions@master
         with:
