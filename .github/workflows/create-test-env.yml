@@ -6,18 +6,28 @@ on:
 
 jobs:
   build:
-    name: Build application code into Lambda deployment package
+    name: Testing application code
     runs-on: ubuntu-latest
     steps:
-      - name: build test
-        run: echo this is the build step
+      - uses: actions/checkout@master
+      - name: Setup python
+        uses: actions/setup-python@v1
+        with:
+          python-version: "3.7"
+      - name: Installing dependencies
+        run: pip install -r requirements.txt --target ./packages
+        working-directory: app/hello
+      - name: Running unit tests
+        run: python3 hello_test.py
+        working-directory: app/hello
 
   terraform:
     name: Deploy test AWS infrastructure
     runs-on: ubuntu-latest
+    needs:
+      - build
     steps:
-      - name: Checkout
-        uses: actions/checkout@master
+      - uses: actions/checkout@master
       - name: Assume Role
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -26,6 +36,8 @@ jobs:
           aws-region: ap-southeast-2
           role-to-assume: ${{ secrets.TERRAFORM_BUILD_ROLE }}
           role-duration-seconds: 3600
+      - name: Generate temporary worksapce ID
+        run: echo "::set-env name=ref_workspace::$(git name-rev HEAD --name-only | sha1sum | cut -d' ' -f1 | cut -c -10)"
       - name: Terraform Init
         uses: hashicorp/terraform-github-actions@master
         with:
@@ -42,14 +54,15 @@ jobs:
           tf_actions_working_dir: .github/terraform
           tf_actions_comment: false
         env:
-          TF_WORKSPACE: ${{ github.ref }}
-
-  deploy:
-    name: Deploy new application code to test infrastructure
-    runs-on: ubuntu-latest
-    needs:
-      - build
-      - terraform
-    steps:
-      - name: deploy test
-        run: echo this is the deploy step
+          TF_WORKSPACE: ${{ env.ref_workspace }}
+      - name: Terraform Apply
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.12.24
+          tf_actions_subcommand: apply
+          tf_actions_working_dir: .github/terraform
+          tf_actions_comment: false
+        env:
+          TF_WORKSPACE: ${{ env.ref_workspace }}
+      - name: Deploy application to test infra
+        run: .github/scripts/deploy_lambda.sh ${{ env.ref_workspace }}-hello-world app/hello

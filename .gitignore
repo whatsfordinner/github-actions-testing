@@ -3,3 +3,5 @@
 .terraform
 terraform.tfstate.d
 placeholder.zip
+__pycache__
+*.zip
