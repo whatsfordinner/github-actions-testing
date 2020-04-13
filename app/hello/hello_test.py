@@ -10,7 +10,7 @@ class HelloTestCase(unittest.TestCase):
         },
         'body': json.dumps(
             {
-                'message': 'hello, world!'
+                'message': 'Hello, world!'
             }
         )
     }

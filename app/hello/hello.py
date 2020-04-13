@@ -8,7 +8,7 @@ def handler(event, context):
         },
         'body': json.dumps(
             {
-                'message': 'hello, world!'
+                'message': 'Rello, world!'
             }
         )
     }
